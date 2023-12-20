@@ -1,0 +1,12 @@
+{% extends 'real/base.html' %}
+{% block content %}
+<section class="jumbotron text-center">
+  <div class="container">
+    <h1 class="jumbotron-heading" style="text-transform: uppercase;">Real Estate Tracker</h1>
+    <p class="lead text-muted">
+      Real Estate Price Tracker is your go-to platform for comprehensive property information. Our website offers detailed insights into various real estate listings, including property type, size, address, price, status, and more. Whether you're a prospective buyer, seller, or an enthusiast keeping an eye on the market trends, our platform provides a user-friendly interface to explore and analyze real estate data. Stay informed about the latest property prices, make well-informed decisions, and navigate the real estate landscape with ease. Real Estate Price Tracker is designed to empower users with the essential details needed to navigate the dynamic world of real estate transactions. Dive into the wealth of property information and streamline your real estate experience with our intuitive and informative platform.
+    </p>
+    <p><a href="{% url 'search'%}" class="btn btn-primary" style="width:400px;height:60px;padding:12px;font-size:25px">Find Your New Home</a></p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'real/base.html' %}
+{% block content %}
+<div class="container">
+  <h2>Are You Sure You Want To Delete This Property</h2>
+  <br>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" style="width:60px">Yes</button>&nbsp&nbsp<a href="{% url 'dashboard' %}" class="btn btn-primary" style="width:60px">No</a>
+  </form>
+</div>
+{% endblock %}

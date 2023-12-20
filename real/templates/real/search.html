@@ -1,0 +1,180 @@
+{% extends 'real/base.html' %}
+{% block content %}
+
+
+<br>
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<div class="container">
+       <form>
+           {% csrf_token %}
+           {% load widget_tweaks %}
+           {% for field in search_form %}
+               <div class="form-group">
+                   {{ field.errors }}
+                   {{ field.label_tag }}
+                   {% render_field field class="form-control" %}
+               </div>
+           {% endfor %}
+       </form>
+   </div>
+
+   <div class="container">
+      <div id="search_results" class="row row-cols-3" style="padding:17px"></div>
+   </div>
+
+   <div class="container">
+       <form>
+           {% csrf_token %}
+           {% load widget_tweaks %}
+           {% for field in latlongform %}
+               <div class="form-group">
+                   {{ field.errors }}
+                   {{ field.label_tag }}
+                   {% render_field field class="form-control" %}
+               </div>
+           {% endfor %}
+       </form>
+   </div>
+
+   <div class="container">
+       <div class="grid-container">
+           <div class="grid-item"></div>
+           <div class="grid-item"></div>
+           <div class="grid-item">
+               <a href="#" class="btn btn-primary" style="width:350px;height:50px;padding:10px;" id="searchButton">SEARCH</a>
+           </div>
+       </div>
+   </div>
+
+<div class="container">
+   <div id="place_results" class="row row-cols-3" style="padding:17px"></div>
+</div>
+
+<style>
+    #formsubmit {
+        display: none;
+    }
+</style>
+
+   <form method="post" id="formsubmit">
+       {% csrf_token %}
+       {% load widget_tweaks %}
+       {% for field in detailform %}
+           <div class="form-group">
+               {{ field.errors }}
+               {{ field.label_tag }}
+               {% render_field field class="form-control" %}
+           </div>
+       {% endfor %}
+   </form>
+
+
+<script>
+  var delayTimer;
+  $('#id_search_term').keyup(function() {
+    clearTimeout(delayTimer);
+    $('#search_results').text('Loading...');
+    delayTimer = setTimeout(function() {
+        var text = $('#id_search_term').val();
+        $.ajax({
+            url: '/area/search',
+            data: {
+                'search_term': text
+            },
+            dataType: 'json',
+            success: function(data) {
+                var results = '';
+                $('#search_results').text('');
+                if (data.features && data.features.length > 0) {
+                    results += '<div class="row">';
+                    data.features.forEach(function(place) {
+                        var coordinates = place.geometry.coordinates;
+                        results += '<div class="col-sm" style="padding:10px;">';
+                        results += '<a href="#" class="btn btn-outline-primary" style="width:350px;height:60px;padding:10px;" onclick="addlatlong({ \'lat\':' + coordinates[1] + ',\'long\':' + coordinates[0] + ' })">' + place.properties.city;
+
+                        if (place.properties.state) {
+                            results += '&nbsp, ' + place.properties.state;
+                        }
+
+                        results += ' , ' + place.properties.country + '</a></div>';
+                    });
+                    results += '</div>';
+                } else {
+                    results = '<div class="col">No results found.</div>';
+                }
+
+                $('#search_results').append(results);
+            },
+        });
+    }, 1000);
+  });
+
+  function addlatlong(data) {
+    $('#id_lat').val(data['lat']);
+    $('#id_long').val(data['long']);
+  }
+
+  function adddetails(data) {
+      $('#id_type').val(data['type']);
+      $('#id_county').val(data['county']);
+      $('#id_address').val(data['address']);
+      $('#id_price').val(data['price']);
+      $('#id_status').val(data['status']);
+      $('#id_size').val(data['size']);
+      $('#formsubmit').submit();
+  }
+
+  $(document).ready(function () {
+      $('#searchButton').click(function (event) {
+          event.preventDefault();  // Prevent the default form submission
+
+          clearTimeout(delayTimer);
+          $('#place_results').text('Loading...');
+
+          delayTimer = setTimeout(function () {
+              var text = $('#id_lat').val();
+              var text1 = $('#id_long').val();
+
+              $.ajax({
+                  url: '/places/search',
+                  data: {
+                      'lat': text,
+                      'long': text1
+                  },
+                  dataType: 'json',
+                  success: function (data) {
+                      var results = '';
+                      $('#place_results').text('');
+
+                      if (data && data.length > 0) {  // Adjust here based on your JSON structure
+                          results += '<div class="row">';
+
+                          data.forEach(function (place) {
+                            results += `<div class="col-sm" style="padding:10px;">`;
+                            results += `<div class="card" style="width: 17rem;"><div class="card-body"><p class="card-text">${place.propertyType}</p><p class="card-text">${place.formattedAddress}</p>`;
+                            results += `<a href="#" class="btn btn-primary" style="width:14rem;height:50px;padding:10px;" onclick="adddetails({ 'type':'${place.propertyType}', 'county':'${place.county}', 'address':'${place.formattedAddress}', 'price':'${place.price}', 'status':'${place.status}', 'size':'${place.lotSize}' })">ADD TO FAVORITES</a></div></div></div>`;
+                          });
+
+                          results += '</div>';
+                      } else {
+                          results = '<div class="col">No results found.</div>';
+                      }
+
+                      $('#place_results').append(results);
+                  },
+              });
+          }, 1000);
+      });
+
+
+  });
+
+
+
+
+</script>
+
+
+{% endblock %}

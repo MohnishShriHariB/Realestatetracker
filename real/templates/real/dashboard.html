@@ -1,0 +1,48 @@
+{% extends 'real/base.html' %}
+{% block content %}
+<br>
+<div class="container">
+  <div class="row row-cols-3">
+    {% for i in favorites %}
+      <div class="col">
+        <div class="card" style="width: 25rem;">
+          <div class="card-body">
+            <h5 class="card-title">{{ forloop.counter }}</h5>
+            <p class="card-text">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Land Type</td>
+                    <td>{{ i.type }}</td>
+                  </tr>
+                  <tr>
+                    <td>County</td>
+                    <td>{{ i.county }}</td>
+                  </tr>
+                  <tr>
+                    <td>Address</td>
+                    <td>{{ i.address }}</td>
+                  </tr>
+                  <tr>
+                    <td>Land Price</td>
+                    <td>{{ i.price }}</td>
+                  </tr>
+                  <tr>
+                    <td>Land Status</td>
+                    <td>{{ i.status }}</td>
+                  </tr>
+                  <tr>
+                    <td>Land Size</td>
+                    <td>{{ i.size }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </p>
+            <a href="{% url 'delete' i.id %}" class="card-link btn btn-primary">Delete</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
