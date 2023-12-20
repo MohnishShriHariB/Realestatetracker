@@ -13,7 +13,7 @@ import urllib
 import requests
 import random
 
-LATLONG_API_KEY="3f7ca991ecc74cfda5705305d501eb13"
+LATLONG_API_KEY="your API_kEY for Geocode API"
 # Create your views here.
 def home(request):
     return render(request,'real\home.html')
@@ -71,8 +71,7 @@ def placesearch(request):
 
         querystring = {"latitude":str(lat),"longitude":str(long),"limit":"10"}
 
-        headers = 'YOUR_HEADER_KEY'
-
+        headers = "Your API_kEY for Reality Mole Property API"
         response = requests.get(url, headers=headers, params=querystring)
         print(response.json())
         return JsonResponse(response.json(), safe=False)
